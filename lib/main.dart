@@ -23,6 +23,27 @@ class FadingTextAnimation extends StatefulWidget {
 }
 
 class FadingTextAnimationState extends State<FadingTextAnimation> {
+  Color _textColor = Colors.white;
+
+  Widget _buildColorButton(Color color) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _textColor = color;
+        });
+      },
+      child: Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.grey),
+        ),
+      ),
+    );
+  }
+  
   bool _isVisible = true;
   bool _isSwitched = true;
   ThemeMode _themeMode = ThemeMode.system;
@@ -47,6 +68,23 @@ class FadingTextAnimationState extends State<FadingTextAnimation> {
 
   @override
   Widget build(BuildContext context) {
+    //Setting up Popup
+    Dialog leadDialog = Dialog(
+      child: Container(
+        height: 300.0,
+        width: 360.0,
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            _buildColorButton(Colors.red),
+            _buildColorButton(Colors.blue),
+            _buildColorButton(Colors.yellow),
+          ],
+        ),
+      ),
+    );
+    
     return MaterialApp(
       darkTheme: ThemeData.dark(),
       themeMode: _themeMode,
@@ -85,7 +123,29 @@ class FadingTextAnimationState extends State<FadingTextAnimation> {
             ],
           ),
         ),
-
+        
+        Center(
+          child: Container(
+            color: _textColor,
+            child: const Text(
+              //displays the current number
+              'HELLO',
+              style: TextStyle(fontSize: 50.0),
+            ),
+          ),
+        ),
+        
+        Center(
+          child: ElevatedButton(
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) => leadDialog);
+            },
+            child: Text('Colors'),
+          ),
+        ),
+        
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
