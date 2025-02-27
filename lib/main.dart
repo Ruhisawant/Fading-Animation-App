@@ -7,58 +7,69 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Activity 7',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Fading Text Animation'),
+    return const MaterialApp(
+      home: FadingTextAnimation(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class FadingTextAnimation extends StatefulWidget {
+  const FadingTextAnimation({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  FadingTextAnimationState createState() => FadingTextAnimationState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class FadingTextAnimationState extends State<FadingTextAnimation> {
   Color _textColor = Colors.white;
+
+  Widget _buildColorButton(Color color) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _textColor = color;
+        });
+      },
+      child: Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.grey),
+        ),
+      ),
+    );
+  }
+
+  bool _isVisible = true;
+  bool _isSwitched = true;
+  ThemeMode _themeMode = ThemeMode.system;
+
+  void toggleTheme(ThemeMode themeMode) {
+    setState(() {
+      _themeMode =
+          _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+    });
+  }
+
+  void toggleVisibility() {
+    setState(() {
+      _isVisible = !_isVisible;
+    });
+  }
+
+  void toggleSlideText() {
+    setState(() {
+      _isSwitched = !_isSwitched;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    //Setting up Popup
     Dialog leadDialog = Dialog(
       child: Container(
         height: 300.0,
@@ -75,49 +86,94 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Fading Thingy"),
-      ),
-      body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Center(
-          child: Container(
-            color: _textColor,
-            child: const Text(
-              //displays the current number
-              'HELLO',
-              style: TextStyle(fontSize: 50.0),
+    return MaterialApp(
+      darkTheme: ThemeData.dark(),
+      themeMode: _themeMode,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Fading Text Animation'),
+        ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: toggleVisibility,
+              child: AnimatedOpacity(
+                opacity: _isVisible ? 1.0 : 0.0,
+                duration: const Duration(seconds: 1),
+                child: const Text('Hello, Flutter!',
+                    style: TextStyle(fontSize: 24)),
+              ),
             ),
-          ),
-        ),
-        Center(
-          child: ElevatedButton(
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) => leadDialog);
-            },
-            child: Text('Colors'),
-          ),
-        ),
-      ]),
-    );
-  }
-
-  Widget _buildColorButton(Color color) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _textColor = color;
-        });
-      },
-      child: Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.grey),
+            const SizedBox(height: 20),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 500),
+              transitionBuilder: (widget, animation) => SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1, 0),
+                  end: Offset.zero,
+                ).animate(animation),
+                child: widget,
+              ),
+              child: Text(
+                _isSwitched ? "Hello!" : "Goodbye!",
+                key: ValueKey<bool>(_isSwitched),
+                style: const TextStyle(fontSize: 24),
+              ),
+            ),
+            Center(
+              child: Container(
+                color: _textColor,
+                child: const Text(
+                  //displays the current number
+                  'HELLO',
+                  style: TextStyle(fontSize: 50.0),
+                ),
+              ),
+            ),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) => leadDialog);
+                },
+                child: Text('Colors'),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                FloatingActionButton(
+                  onPressed: () {
+                    setState(() {
+                      if (_themeMode == ThemeMode.dark) {
+                        _themeMode = ThemeMode.light;
+                      } else {
+                        _themeMode = ThemeMode.dark;
+                      }
+                    });
+                  },
+                  child: Icon(
+                    _themeMode == ThemeMode.dark
+                        ? Icons.wb_sunny
+                        : Icons.dark_mode,
+                    color: _themeMode == ThemeMode.dark
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                ),
+                FloatingActionButton(
+                  onPressed: toggleVisibility,
+                  child: const Icon(Icons.play_arrow),
+                ),
+                FloatingActionButton(
+                  onPressed: toggleSlideText,
+                  child: const Icon(Icons.arrow_forward),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
