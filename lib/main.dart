@@ -58,12 +58,12 @@ class FadingTextAnimationState extends State<FadingTextAnimation> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AnimatedOpacity(
+              GestureDetector(
+                onTap: toggleVisibility,
+                child: AnimatedOpacity(
                 opacity: _isVisible ? 1.0 : 0.0,
                 duration: const Duration(seconds: 1),
-                child: const Text(
-                  'Hello, Flutter!',
-                  style: TextStyle(fontSize: 24),
+                child: const Text('Hello, Flutter!', style: TextStyle(fontSize: 24)),
                 ),
               ),
               const SizedBox(height: 20),
@@ -77,7 +77,7 @@ class FadingTextAnimationState extends State<FadingTextAnimation> {
                   child: widget,
                 ),
                 child: Text(
-                  _isSwitched ? "Welcome!" : "Goodbye!",
+                  _isSwitched ? "Hello!" : "Goodbye!",
                   key: ValueKey<bool>(_isSwitched),
                   style: const TextStyle(fontSize: 24),
                 ),
