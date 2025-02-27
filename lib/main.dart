@@ -24,17 +24,24 @@ class FadingTextAnimation extends StatefulWidget {
 
 class FadingTextAnimationState extends State<FadingTextAnimation> {
   bool _isVisible = true;
+  bool _isSwitched = true;
   ThemeMode _themeMode = ThemeMode.system;
 
-  void changeTheme(ThemeMode themeMode) {
+  void toggleTheme(ThemeMode themeMode) {
     setState(() {
-      _themeMode = themeMode;
+      _themeMode = _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
     });
   }
 
   void toggleVisibility() {
     setState(() {
       _isVisible = !_isVisible;
+    });
+  }
+
+  void toggleSlideText() {
+    setState(() {
+      _isSwitched = !_isSwitched;
     });
   }
 
@@ -46,20 +53,39 @@ class FadingTextAnimationState extends State<FadingTextAnimation> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Fading Text Animation'),
-          actions: const[
-            Icon(Icons.dark_mode, color: Colors.white, size: 30),
-          ],
         ),
         body: Center(
-          child: AnimatedOpacity(
-            opacity: _isVisible ? 1.0 : 0.0,
-            duration: const Duration(seconds: 1),
-            child: const Text(
-              'Hello, Flutter!',
-              style: TextStyle(fontSize: 24),
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedOpacity(
+                opacity: _isVisible ? 1.0 : 0.0,
+                duration: const Duration(seconds: 1),
+                child: const Text(
+                  'Hello, Flutter!',
+                  style: TextStyle(fontSize: 24),
+                ),
+              ),
+              const SizedBox(height: 20),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                transitionBuilder: (widget, animation) => SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(1, 0),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: widget,
+                ),
+                child: Text(
+                  _isSwitched ? "Welcome!" : "Goodbye!",
+                  key: ValueKey<bool>(_isSwitched),
+                  style: const TextStyle(fontSize: 24),
+                ),
+              ),
+            ],
           ),
         ),
+
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -81,6 +107,10 @@ class FadingTextAnimationState extends State<FadingTextAnimation> {
             FloatingActionButton(
               onPressed: toggleVisibility,
               child: const  Icon(Icons.play_arrow),
+            ),
+            FloatingActionButton(
+              onPressed: toggleSlideText,
+              child: const  Icon(Icons.arrow_forward),
             ),
           ],
         ),
