@@ -21,6 +21,7 @@ class FadingTextAnimation extends StatefulWidget {
   @override
   FadingTextAnimationState createState() => FadingTextAnimationState();
 }
+
 class FadingTextAnimationState extends State<FadingTextAnimation> {
   bool _isVisible = true;
   ThemeMode _themeMode = ThemeMode.system;
@@ -59,27 +60,30 @@ class FadingTextAnimationState extends State<FadingTextAnimation> {
             ),
           ),
         ),
-        floatingActionButton: const Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          FloatingActionButton(
-            onPressed: () {
-              setState(() {
-                if (_themeMode == ThemeMode.dark) {
-                  _themeMode = ThemeMode.light;
-                } else {
-                  _themeMode = ThemeMode.dark;
-                }
-              });
-            },
-            child: Icon(Icons.dark_mode, color: Colors.white),
-          ),
-          FloatingActionButton(
-            onPressed: toggleVisibility,
-            child: Icon(Icons.play_arrow),
-          ),
-        ],
-      ),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            FloatingActionButton(
+              onPressed: () {
+                setState(() {
+                  if (_themeMode == ThemeMode.dark) {
+                    _themeMode = ThemeMode.light;
+                  } else {
+                    _themeMode = ThemeMode.dark;
+                  }
+                });
+              },
+              child: Icon(
+                _themeMode == ThemeMode.dark ? Icons.wb_sunny : Icons.dark_mode,
+                color: _themeMode == ThemeMode.dark ? Colors.white : Colors.black,
+              ),
+            ),
+            FloatingActionButton(
+              onPressed: toggleVisibility,
+              child: const  Icon(Icons.play_arrow),
+            ),
+          ],
+        ),
       ),
     );
   }
