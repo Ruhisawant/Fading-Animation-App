@@ -55,26 +55,69 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  //Put states here
-  final int _a_val = 0;
-  final int _r_val = 0;
-  final int _g_val = 0;
-  final int _b_val = 10;
+  Color _textColor = Colors.white;
 
   @override
   Widget build(BuildContext context) {
+    Dialog leadDialog = Dialog(
+      child: Container(
+        height: 300.0,
+        width: 360.0,
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            _buildColorButton(Colors.red),
+            _buildColorButton(Colors.blue),
+            _buildColorButton(Colors.yellow),
+          ],
+        ),
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Fading Thingy"),
       ),
-      body: Center(
-        child: Container(
-          color: Color.fromARGB(_a_val, _r_val, _g_val, _b_val),
-          child: const Text(
-            //displays the current number
-            'HELLO',
-            style: TextStyle(fontSize: 25.0),
+      body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Center(
+          child: Container(
+            color: _textColor,
+            child: const Text(
+              //displays the current number
+              'HELLO',
+              style: TextStyle(fontSize: 50.0),
+            ),
           ),
+        ),
+        Center(
+          child: ElevatedButton(
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) => leadDialog);
+            },
+            child: Text('Colors'),
+          ),
+        ),
+      ]),
+    );
+  }
+
+  Widget _buildColorButton(Color color) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _textColor = color;
+        });
+      },
+      child: Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.grey),
         ),
       ),
     );
