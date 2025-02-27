@@ -22,72 +22,115 @@ class FadingTextAnimation extends StatefulWidget {
   FadingTextAnimationState createState() => FadingTextAnimationState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class FadingTextAnimationState extends State<FadingTextAnimation> {
+  bool _isVisible = true;
+  bool _isSwitched = true;
+  ThemeMode _themeMode = ThemeMode.system;
+  
+  // Put states here
+  int _a_val = 0;
+  int _r_val = 0;
+  int _g_val = 0;
+  int _b_val = 10;
 
-  void _incrementCounter() {
+  void toggleTheme(ThemeMode themeMode) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _themeMode = _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+    });
+  }
+
+  void toggleVisibility() {
+    setState(() {
+      _isVisible = !_isVisible;
+    });
+  }
+
+  void toggleSlideText() {
+    setState(() {
+      _isSwitched = !_isSwitched;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+    return MaterialApp(
+      darkTheme: ThemeData.dark(),
+      themeMode: _themeMode,
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Fading Text Animation'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: toggleVisibility,
+                child: AnimatedOpacity(
+                opacity: _isVisible ? 1.0 : 0.0,
+                duration: const Duration(seconds: 1),
+                child: const Text('Hello, Flutter!', style: TextStyle(fontSize: 24)),
+                ),
+              ),
+              const SizedBox(height: 20),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                transitionBuilder: (widget, animation) => SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(1, 0),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: widget,
+                ),
+                child: Text(
+                  _isSwitched ? "Hello!" : "Goodbye!",
+                  key: ValueKey<bool>(_isSwitched),
+                  style: const TextStyle(fontSize: 24),
+                ),
+              ),
+              Center(
+                child: Container(
+                  color: Color.fromARGB(_a_val, _r_val, _g_val, _b_val),
+                  child: const Text(
+                    //displays the current number
+                    'HELLO',
+                    style: TextStyle(fontSize: 25.0),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            FloatingActionButton(
+              onPressed: () {
+                setState(() {
+                  if (_themeMode == ThemeMode.dark) {
+                    _themeMode = ThemeMode.light;
+                  } else {
+                    _themeMode = ThemeMode.dark;
+                  }
+                });
+              },
+              child: Icon(
+                _themeMode == ThemeMode.dark ? Icons.wb_sunny : Icons.dark_mode,
+                color: _themeMode == ThemeMode.dark ? Colors.white : Colors.black,
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            FloatingActionButton(
+              onPressed: toggleVisibility,
+              child: const  Icon(Icons.play_arrow),
+            ),
+            FloatingActionButton(
+              onPressed: toggleSlideText,
+              child: const  Icon(Icons.arrow_forward),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
