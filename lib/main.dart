@@ -8,9 +8,9 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-    Widget build(BuildContext context) {
-      return const MaterialApp(
-        home: FadingTextAnimation(),
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: FadingTextAnimation(),
     );
   }
 }
@@ -43,14 +43,15 @@ class FadingTextAnimationState extends State<FadingTextAnimation> {
       ),
     );
   }
-  
+
   bool _isVisible = true;
   bool _isSwitched = true;
   ThemeMode _themeMode = ThemeMode.system;
 
   void toggleTheme(ThemeMode themeMode) {
     setState(() {
-      _themeMode = _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+      _themeMode =
+          _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
     });
   }
 
@@ -84,7 +85,7 @@ class FadingTextAnimationState extends State<FadingTextAnimation> {
         ),
       ),
     );
-    
+
     return MaterialApp(
       darkTheme: ThemeData.dark(),
       themeMode: _themeMode,
@@ -99,9 +100,10 @@ class FadingTextAnimationState extends State<FadingTextAnimation> {
               GestureDetector(
                 onTap: toggleVisibility,
                 child: AnimatedOpacity(
-                opacity: _isVisible ? 1.0 : 0.0,
-                duration: const Duration(seconds: 1),
-                child: const Text('Hello, Flutter!', style: TextStyle(fontSize: 24)),
+                  opacity: _isVisible ? 1.0 : 0.0,
+                  duration: const Duration(seconds: 1),
+                  child: const Text('Hello, Flutter!',
+                      style: TextStyle(fontSize: 24)),
                 ),
               ),
               const SizedBox(height: 20),
@@ -120,32 +122,29 @@ class FadingTextAnimationState extends State<FadingTextAnimation> {
                   style: const TextStyle(fontSize: 24),
                 ),
               ),
+              Center(
+                child: Container(
+                  color: _textColor,
+                  child: const Text(
+                    //displays the current number
+                    'HELLO',
+                    style: TextStyle(fontSize: 50.0),
+                  ),
+                ),
+              ),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => leadDialog);
+                  },
+                  child: Text('Colors'),
+                ),
+              ),
             ],
           ),
         ),
-        
-        Center(
-          child: Container(
-            color: _textColor,
-            child: const Text(
-              //displays the current number
-              'HELLO',
-              style: TextStyle(fontSize: 50.0),
-            ),
-          ),
-        ),
-        
-        Center(
-          child: ElevatedButton(
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) => leadDialog);
-            },
-            child: Text('Colors'),
-          ),
-        ),
-        
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -161,16 +160,17 @@ class FadingTextAnimationState extends State<FadingTextAnimation> {
               },
               child: Icon(
                 _themeMode == ThemeMode.dark ? Icons.wb_sunny : Icons.dark_mode,
-                color: _themeMode == ThemeMode.dark ? Colors.white : Colors.black,
+                color:
+                    _themeMode == ThemeMode.dark ? Colors.white : Colors.black,
               ),
             ),
             FloatingActionButton(
               onPressed: toggleVisibility,
-              child: const  Icon(Icons.play_arrow),
+              child: const Icon(Icons.play_arrow),
             ),
             FloatingActionButton(
               onPressed: toggleSlideText,
-              child: const  Icon(Icons.arrow_forward),
+              child: const Icon(Icons.arrow_forward),
             ),
           ],
         ),
